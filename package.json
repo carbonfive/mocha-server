@@ -1,0 +1,32 @@
+{
+  "name": "mocha-server",
+  "version": "0.0.0",
+  "description": "Serves up your mocha tests in web-pages so you can test them in browser.",
+  "main": "index.js",
+  "scripts": {
+    "test": "cake test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/carbonfive/mocha-server.git"
+  },
+  "keywords": [
+    "mocha",
+    "test",
+    "browser",
+    "runner",
+    "phantomjs",
+    "server"
+  ],
+  "author": "Carbon Five",
+  "contributors": [
+    "Rudy Jahchan <rudy@carbonfive.com>",
+    "Hugo Melo <hugo@carbonfive.com>"
+  ],
+  "dependencies": {
+    "coffee-script": "*",
+    "express": "*"
+  },
+  "license": "BSD",
+  "readmeFilename": "README.md"
+}
