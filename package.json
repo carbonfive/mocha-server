@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Serves up your mocha tests in web-pages so you can test them in browser.",
   "main": "index.js",
+  "bin" : { "mocha-server" : "./bin/mocha-server" },
   "scripts": {
     "test": "cake test"
   },
@@ -27,7 +28,8 @@
     "coffee-script": "*",
     "express": "*",
     "mocha": "*",
-    "jade": "*"
+    "jade": "*",
+    "commander" : "*"
   },
   "license": "BSD",
   "readmeFilename": "README.md"
