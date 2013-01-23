@@ -25,7 +25,9 @@
   ],
   "dependencies": {
     "coffee-script": "*",
-    "express": "*"
+    "express": "*",
+    "mocha": "*",
+    "jade": "*"
   },
   "license": "BSD",
   "readmeFilename": "README.md"
