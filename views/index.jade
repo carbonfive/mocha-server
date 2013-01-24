@@ -3,12 +3,14 @@ html(lang="en")
   head
     title 'mocha-server'
     link(rel="stylesheet", href="mocha.css")
-    script(type='text/javascript')
-      if (foo) {
-         bar()
-      }
   body
     #mocha
     script(src='mocha.js')
     script
-      mocha.run()
+      mocha.bail(#{bail});
+      mocha.ignoreLeaks();
+      mocha.setup("#{ui}");
+    each file in scriptOrder
+      script(src=file)
+    script
+      mocha.run();

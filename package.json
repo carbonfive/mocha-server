@@ -29,7 +29,9 @@
     "express": "*",
     "mocha": "*",
     "jade": "*",
-    "commander" : "*"
+    "commander" : "*",
+    "connect-file-cache": "*",
+    "snockets" : "*"
   },
   "license": "BSD",
   "readmeFilename": "README.md"
