@@ -13,4 +13,8 @@ html(lang="en")
     each file in scriptOrder
       script(src=file)
     script
-      mocha.run();
+      if (window.mochaPhantomJS) {
+        mochaPhantomJS.run();
+      } else {
+        mocha.run();
+      }

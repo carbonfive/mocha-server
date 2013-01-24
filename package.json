@@ -31,7 +31,8 @@
     "jade": "*",
     "commander" : "*",
     "connect-file-cache": "*",
-    "snockets" : "*"
+    "snockets" : "*",
+    "mocha-phantomjs" : "*"
   },
   "license": "BSD",
   "readmeFilename": "README.md"

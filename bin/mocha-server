@@ -12,12 +12,15 @@ var mochaServer = new MochaServer;
 var join = path.join;
 var basename = path.basename;
 var cwd = process.cwd();
+var spawn = require('child_process').spawn;
+var print = require('util').print;
 
 program
   .version(JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8')).version)
   .option('-r, --require <name>', 'require the given module')
   .option('-u, --ui <name>', 'specify user-interface (bdd|tdd|exports)', 'bdd')
   .option('-b, --bail', "bail after first test failure")
+  .option('-h, --headless', "run headless with phantomjs")
   .option('--recursive', 'include sub directories');
 
 var requires = []
@@ -48,4 +51,34 @@ mochaServer.testPaths = args;
 mochaServer.recursive = program.recursive;
 mochaServer.ui = program.ui;
 mochaServer.bail = program.bail || false;
-mochaServer.run()
+
+if (program.headless) {
+  mochaServer.run(launchMochaPhantomJS);
+  function launchMochaPhantomJS() {
+    spawnArgs = ['http://localhost:8888']
+
+    var mochaPhantomjs;
+    for (var i=0; i < module.paths.length; i++) {
+      var bin = path.join(module.paths[i], '.bin/mocha-phantomjs');
+      if (exists(bin)) {
+        mochaPhantomjs = spawn(bin, spawnArgs);
+        break;
+      }
+    }
+    if (mochaPhantomjs === undefined) { mochaPhantomjs = spawn('mocha-phantomjs', spawnArgs); }
+
+    mochaPhantomjs.stdout.on('data', function(data){
+      print(data.toString());
+    });
+
+    mochaPhantomjs.stderr.on('data', function(data) {
+      print("ERROR " + data.toString());
+    });
+
+    mochaPhantomjs.on('exit', function(code){
+      process.exit(code);
+    });
+  }
+} else {
+  mochaServer.run();
+}
