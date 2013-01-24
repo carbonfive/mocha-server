@@ -2,4 +2,50 @@
 
 require('coffee-script');
 
-require("../lib/mocha-server");
+var program = require('commander');
+var fs = require('fs');
+var path = require('path');
+var resolve = path.resolve;
+var exists = fs.existsSync || path.existsSync;
+var MochaServer = require('../lib/mocha-server');
+var mochaServer = new MochaServer;
+var join = path.join;
+var basename = path.basename;
+var cwd = process.cwd();
+
+program
+  .version(JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8')).version)
+  .option('-r, --require <name>', 'require the given module')
+  .option('-u, --ui <name>', 'specify user-interface (bdd|tdd|exports)', 'bdd')
+  .option('-b, --bail', "bail after first test failure")
+  .option('--recursive', 'include sub directories');
+
+var requires = []
+
+program.on('require', function(mod){
+  requires.push(mod);
+});
+
+try {
+  var opts = fs.readFileSync('test/mocha-server.opts', 'utf8')
+    .trim()
+    .split(/\s+/);
+
+  process.argv = process.argv
+    .slice(0, 2)
+    .concat(opts.concat(process.argv.slice(2)));
+} catch (err) {
+  // ignore
+}
+
+program.parse(process.argv);
+
+var args = program.args;
+if (!args.length) args.push('test');
+
+mochaServer.requirePaths = requires;
+mochaServer.testPaths = args;
+mochaServer.recursive = program.recursive;
+mochaServer.ui = program.ui;
+mochaServer.bail = program.bail || false;
+mochaServer.run()
