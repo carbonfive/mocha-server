@@ -19,9 +19,11 @@ class MochaServer
     @app.set "view engine", "jade"
     @app.set 'views', "#{__dirname}/../views"
 
-    mochaDir = 'node_modules/mocha'
-    css = fs.readFileSync resolve cwd, mochaDir, 'mocha.css'
-    js = fs.readFileSync resolve cwd, mochaDir, 'mocha.js'
+    mochaDir = path.dirname require.resolve('mocha')
+    cssPath = resolve mochaDir, 'mocha.css'
+    css = fs.readFileSync cssPath
+    jsPath = resolve mochaDir, 'mocha.js'
+    js = fs.readFileSync jsPath
     @cache.set 'mocha.css', css
     @cache.set 'mocha.js', js
 
