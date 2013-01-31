@@ -18,9 +18,11 @@ var print = require('util').print;
 program
   .version(JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8')).version)
   .option('-r, --require <name>', 'require the given module')
+  .option('-R, --reporter <name>', 'specify the reporter to use', 'dot')
   .option('-u, --ui <name>', 'specify user-interface (bdd|tdd|exports)', 'bdd')
   .option('-b, --bail', "bail after first test failure")
   .option('-h, --headless', "run headless with phantomjs")
+  .option('--ignore-leaks', 'ignore global variable leaks')
   .option('--recursive', 'include sub directories');
 
 var requires = []
@@ -51,11 +53,17 @@ mochaServer.testPaths = args;
 mochaServer.recursive = program.recursive;
 mochaServer.ui = program.ui;
 mochaServer.bail = program.bail || false;
+mochaServer.ignoreLeaks = program.ignoreLeaks || false;
 
 if (program.headless) {
   mochaServer.run(launchMochaPhantomJS);
   function launchMochaPhantomJS() {
-    spawnArgs = ['http://localhost:8888']
+    spawnArgs = []
+    if (program.reporter) {
+      spawnArgs.push('-R');
+      spawnArgs.push(program.reporter);
+    }
+    spawnArgs.push('http://localhost:8888');
 
     var mochaPhantomjs;
     for (var i=0; i < module.paths.length; i++) {
@@ -65,15 +73,12 @@ if (program.headless) {
         break;
       }
     }
-    if (mochaPhantomjs === undefined) { mochaPhantomjs = spawn('mocha-phantomjs', spawnArgs); }
+    if (mochaPhantomjs === undefined) {
+      mochaPhantomjs = spawn('mocha-phantomjs', spawnArgs);
+    }
 
-    mochaPhantomjs.stdout.on('data', function(data){
-      print(data.toString());
-    });
-
-    mochaPhantomjs.stderr.on('data', function(data) {
-      print("ERROR " + data.toString());
-    });
+    mochaPhantomjs.stdout.pipe(process.stdout, { end: false });
+    mochaPhantomjs.stderr.pipe(process.stderr, { end: false });
 
     mochaPhantomjs.on('exit', function(code){
       process.exit(code);

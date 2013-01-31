@@ -12,6 +12,8 @@ Snockets = require 'snockets'
 class MochaServer
   constructor: ->
     @bail = false
+    @ignoreLeaks = false
+    @globals = null
 
     @app = express()
     @cache = connectFileCache()
@@ -44,7 +46,7 @@ class MochaServer
         scriptOrder.push filename
         @cache.set filename, js
 
-    response.render 'index', { scriptOrder , @ui, @bail }
+    response.render 'index', { scriptOrder , @ui, @bail, @ignoreLeaks }
 
   discoverFiles: (path)->
     re = /.(js|coffee)$/

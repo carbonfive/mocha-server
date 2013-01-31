@@ -7,9 +7,17 @@ html(lang="en")
     #mocha
     script(src='mocha.js')
     script
-      mocha.bail(#{bail});
-      mocha.ignoreLeaks();
-      mocha.setup("#{ui}");
+      (function() {
+        ignoreLeaks = #{ignoreLeaks};
+
+        mocha.bail(#{bail});
+
+        if(ignoreLeaks) {
+          mocha.ignoreLeaks();
+        }
+
+        mocha.setup("#{ui}");
+      })();
     each file in scriptOrder
       script(src=file)
     script
