@@ -1,6 +1,6 @@
 {
   "name": "mocha-server",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Serves up your mocha tests in web-pages so you can test them in browser.",
   "main": "index.js",
   "bin" : { "mocha-server" : "./bin/mocha-server" },
