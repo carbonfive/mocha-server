@@ -70,7 +70,7 @@ class MochaServer
     files
 
   run: (callback)->
-    callback ?= -> console.log 'Tests availabe at http://localhost:8888'
+    callback ?= -> console.log 'Tests available at http://localhost:8888'
     @app.listen 8888, callback
 
 module.exports = exports = MochaServer
