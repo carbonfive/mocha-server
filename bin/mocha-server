@@ -7,13 +7,9 @@ var fs = require('fs');
 var path = require('path');
 var resolve = path.resolve;
 var exists = fs.existsSync || path.existsSync;
-var MochaServer = require('../lib/mocha-server');
-var mochaServer = new MochaServer;
 var join = path.join;
 var basename = path.basename;
 var cwd = process.cwd();
-var spawn = require('child_process').spawn;
-var print = require('util').print;
 
 program
   .version(JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8')).version)
@@ -48,42 +44,18 @@ program.parse(process.argv);
 var args = program.args;
 if (!args.length) args.push('test');
 
-mochaServer.requirePaths = requires;
-mochaServer.testPaths = args;
-mochaServer.recursive = program.recursive;
-mochaServer.ui = program.ui;
-mochaServer.bail = program.bail || false;
-mochaServer.ignoreLeaks = program.ignoreLeaks || false;
 
-if (program.headless) {
-  mochaServer.run(launchMochaPhantomJS);
-  function launchMochaPhantomJS() {
-    spawnArgs = []
-    if (program.reporter) {
-      spawnArgs.push('-R');
-      spawnArgs.push(program.reporter);
-    }
-    spawnArgs.push('http://localhost:8888');
 
-    var mochaPhantomjs;
-    for (var i=0; i < module.paths.length; i++) {
-      var bin = path.join(module.paths[i], '.bin/mocha-phantomjs');
-      if (exists(bin)) {
-        mochaPhantomjs = spawn(bin, spawnArgs);
-        break;
-      }
-    }
-    if (mochaPhantomjs === undefined) {
-      mochaPhantomjs = spawn('mocha-phantomjs', spawnArgs);
-    }
+var MochaServer = require('../lib/mocha-server');
+var mochaServer = new MochaServer({
+  requirePaths: requires,
+  testPaths: args,
+  recursive: program.recursive,
+  ui: program.ui,
+  bail: program.bail,
+  ignoreLeaks: program.ignoreLeaks,
+  headless: program.headless,
+  reporter: program.reporter
+});
+mochaServer.launch();
 
-    mochaPhantomjs.stdout.pipe(process.stdout, { end: false });
-    mochaPhantomjs.stderr.pipe(process.stderr, { end: false });
-
-    mochaPhantomjs.on('exit', function(code){
-      process.exit(code);
-    });
-  }
-} else {
-  mochaServer.run();
-}

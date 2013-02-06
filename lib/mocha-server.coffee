@@ -8,11 +8,20 @@ join = path.join
 basename = path.basename
 cwd = process.cwd()
 Snockets = require 'snockets'
+spawn = require('child_process').spawn
 
 class MochaServer
-  constructor: ->
-    @bail = false
-    @ignoreLeaks = false
+  constructor: (config) ->
+    
+    @requirePaths = config.requirePaths
+    @testPaths = config.testPaths
+    @recursive = config.recursive
+    @ui = config.ui
+    @bail = config.bail || false
+    @ignoreLeaks = config.ignoreLeaks || false
+    @headless = config.headless
+    @reporter = config.reporter
+    
     @globals = null
 
     @app = express()
@@ -30,6 +39,35 @@ class MochaServer
     @cache.set 'mocha.js', js
 
     @app.get "/", @show
+  
+  launch: ->
+    if @headless
+      @run ->
+        spawnArgs = []
+        if @reporter
+          spawnArgs.push '-R'
+          spawnArgs.push @reporter
+        spawnArgs.push 'http://localhost:8888'
+
+        for i in [0..module.paths.length]
+          bin = path.join module.paths[i], '.bin/mocha-phantomjs'
+          if exists bin
+            mochaPhantomjs = spawn bin, spawnArgs
+            break
+
+        if mochaPhantomjs == undefined
+          mochaPhantomjs = spawn 'mocha-phantomjs', spawnArgs
+
+        mochaPhantomjs.stdout.pipe process.stdout,  end: false
+        mochaPhantomjs.stderr.pipe process.stderr,  end: false
+
+        mochaPhantomjs.on 'exit', (code) ->
+          process.exit code
+
+     else
+       @run()
+  
+  
 
   show: (request, response)=>
     files = []
