@@ -2,17 +2,13 @@ express = require 'express'
 connectFileCache = require 'connect-file-cache'
 fs = require 'fs'
 path = require 'path'
-resolve = path.resolve
 exists = fs.existsSync || path.existsSync
-join = path.join
-basename = path.basename
-cwd = process.cwd()
 Snockets = require 'snockets'
 spawn = require('child_process').spawn
 
 class MochaServer
   constructor: (config) ->
-    
+
     @requirePaths = config.requirePaths
     @testPaths = config.testPaths
     @recursive = config.recursive
@@ -21,7 +17,10 @@ class MochaServer
     @ignoreLeaks = config.ignoreLeaks || false
     @headless = config.headless
     @reporter = config.reporter
-    
+    @compilers = config.compilers || {}
+
+    @setUpCompilers(config.compilers)
+
     @globals = null
 
     @app = express()
@@ -31,15 +30,15 @@ class MochaServer
     @app.set 'views', "#{__dirname}/../views"
 
     mochaDir = path.dirname require.resolve('mocha')
-    cssPath = resolve mochaDir, 'mocha.css'
+    cssPath = path.resolve mochaDir, 'mocha.css'
     css = fs.readFileSync cssPath
-    jsPath = resolve mochaDir, 'mocha.js'
+    jsPath = path.resolve mochaDir, 'mocha.js'
     js = fs.readFileSync jsPath
     @cache.set 'mocha.css', css
     @cache.set 'mocha.js', js
 
     @app.get "/", @show
-  
+
   launch: ->
     if @headless
       @run ->
@@ -67,15 +66,10 @@ class MochaServer
      else
        @run()
   
-  
 
   show: (request, response)=>
-    files = []
 
-    for path in @requirePaths.concat(@testPaths)
-      for discoveredFilePath in @discoverFiles(path)
-        resolvedFilePath = resolve discoveredFilePath
-        files.push resolvedFilePath unless resolvedFilePath in files
+    files = @discoverFilesInPaths @requirePaths.concat(@testPaths)
 
     snockets = new Snockets
     scriptOrder = []
@@ -86,26 +80,50 @@ class MochaServer
 
     response.render 'index', { scriptOrder , @ui, @bail, @ignoreLeaks }
 
-  discoverFiles: (path)->
-    re = /.(js|coffee)$/
-    originalPath = path
+  discoverFilesInPaths: (paths)->
+    files = []
+    for p in paths
+      for discoveredFilePath in @discoverFiles(p)
+        resolvedFilePath = path.resolve discoveredFilePath
+        files.push resolvedFilePath unless resolvedFilePath in files
+    files
 
-    path = "#{originalPath}.js" unless exists path
-    path = "#{originalPath}.coffee" unless exists path
-    stat = fs.statSync path
-    (return [path]) if stat.isFile()
+  discoverFiles: (rootPath)->
+    originalPath = rootPath
+
+    rootPath = "#{originalPath}.js" unless exists rootPath
+    rootPath = "#{originalPath}.coffee" unless exists rootPath
+    stat = fs.statSync rootPath
+    (return [rootPath]) if stat.isFile()
 
     files = []
-    for file in fs.readdirSync path
+    for file in fs.readdirSync rootPath
       do (file)=>
-        file = join path, file
+        file = path.join rootPath, file
         stat = fs.statSync file
         if stat.isDirectory()
           files = files.concat(@discoverFiles file) if @recursive
           return
-        return if !stat.isFile() or !re.test(file) or basename(file)[0] == '.'
+        return if not stat.isFile() or not @shouldInclude(file)
         files.push file
     files
+
+  setUpCompilers: (compilers)->
+    for ext, compiler of compilers
+      Snockets.compilers[ext] = require path.join process.cwd(), compiler
+
+  fileMatchingRegExp: ->
+    s = '^[^\.].*\.(js|coffee'
+    for ext of @compilers
+      s += '|' + ext
+    s += ')$'
+    new RegExp(s)
+
+  shouldInclude: (file)->
+    @re ||= @fileMatchingRegExp()
+    @re.test(path.basename(file))
+
+
 
   run: (callback)->
     callback ?= -> console.log 'Tests available at http://localhost:8888'

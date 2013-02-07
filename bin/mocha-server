@@ -10,6 +10,7 @@ var exists = fs.existsSync || path.existsSync;
 var join = path.join;
 var basename = path.basename;
 var cwd = process.cwd();
+var compilers = {};
 
 program
   .version(JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8')).version)
@@ -18,6 +19,7 @@ program
   .option('-u, --ui <name>', 'specify user-interface (bdd|tdd|exports)', 'bdd')
   .option('-b, --bail', "bail after first test failure")
   .option('-h, --headless', "run headless with phantomjs")
+  .option('-c, --compiler <name>', "pass in [ext]:[path to compiler]")
   .option('--ignore-leaks', 'ignore global variable leaks')
   .option('--recursive', 'include sub directories');
 
@@ -25,6 +27,15 @@ var requires = []
 
 program.on('require', function(mod){
   requires.push(mod);
+});
+
+program.on('compiler', function(extAndCompiler){
+  var s = extAndCompiler.split(':');
+  if (s.length !== 2) {
+    console.error("Option error: compiler must use [ext]:[path to compiler] format");
+    process.exit(1);
+  }
+  compilers[s[0]] = s[1]
 });
 
 try {
@@ -44,7 +55,7 @@ program.parse(process.argv);
 var args = program.args;
 if (!args.length) args.push('test');
 
-
+// Args parsed... launch mocha server.
 
 var MochaServer = require('../lib/mocha-server');
 var mochaServer = new MochaServer({
@@ -55,7 +66,8 @@ var mochaServer = new MochaServer({
   bail: program.bail,
   ignoreLeaks: program.ignoreLeaks,
   headless: program.headless,
-  reporter: program.reporter
+  reporter: program.reporter,
+  compilers: compilers
 });
 mochaServer.launch();
 
