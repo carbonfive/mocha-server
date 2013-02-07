@@ -56,7 +56,6 @@ var args = program.args;
 if (!args.length) args.push('test');
 
 // Args parsed... launch mocha server.
-
 var MochaServer = require('../lib/mocha-server');
 var mochaServer = new MochaServer({
   requirePaths: requires,
