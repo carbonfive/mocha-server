@@ -17,9 +17,7 @@ In its simplest form, you run <code>mocha-server</code> from the
 command-line:
 
 ```sh
-
 $ mocha-server
-
 ```
 
 This will launch a server that can be accessed at http://localhost:8888
@@ -28,7 +26,6 @@ This will launch a server that can be accessed at http://localhost:8888
 The following flags can also be used:
 
 ```sh
-
   Usage: mocha-server [options] [test files...]
 
   Options:
@@ -43,7 +40,6 @@ The following flags can also be used:
     -c, --compiler <name>  pass in [ext]:[path to compiler]
     --ignore-leaks         ignore global variable leaks
     --recursive            include sub directories
-
 ```
 
 By default, tests are pulled in from the <code>test</code> directory.
@@ -101,11 +97,9 @@ arguments to those passed on the command line. For example, suppose you
 have the following:
 
 ```
-
 --require ./test/support
 -h
 test/assets
-
 ```
 
 It will ensure the contents of <code>test/support</code> is loaded
@@ -119,17 +113,13 @@ headlessly. You need to install [PhantomJS v.1.7.0][phantomjs] or
 greater and then you can enter:
 
 ```sh
-
 $ mocha-server --headless
-
 ```
 
 Or:
 
 ```sh
-
 $ mocha-server -h
-
 ```
 
 This launches the server, then runs <code>mocha-phantomjs</code>
@@ -141,9 +131,7 @@ The files under <code>test</code> folder provide examples of writing
 tests for the system. You can run them by:
 
 ```sh
-
 $ mocha-server
-
 ```
 
 ## Testing
@@ -152,9 +140,7 @@ You can test <code>mocha-server</code> by cloning this repository and
 running:
 
 ```sh
-
 $ cake test
-
 ```
 
 This will run the tests under the <code>spec</code> folder.
