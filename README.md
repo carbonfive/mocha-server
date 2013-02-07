@@ -3,7 +3,7 @@
 <code>mocha-server</code> mounts code and
 [mocha][mocha] tests so they can be run in browser, and can even run
 them headlessly with [mocha-phamtomjs][mocha-phantomjs] so they can  be part of your build
-process.
+process. Use it to run both frontend and backend javascript specs with mocha.
 
 ## Installation
 
@@ -71,7 +71,7 @@ functionality is supplied by [snockets][snockets].
 #### Adding Additional Javascript Compilers
 
 Out of the box, <code>mocha-server</code> supports Javascript and
-[coffeescript][coffeescript] files, through [snockets][snockets]. You can
+[coffeescript][coffeescript] files through [snockets][snockets]. You can
 pass in additional compilers through the <code>--compiler</code flag as
 follows:
 
@@ -134,7 +134,11 @@ tests for the system. You can run them by:
 $ mocha-server
 ```
 
-## Testing
+## Contributing
+
+Fork the repo, make a branch, add tests, make your changes, and submit a pull-request!
+
+### Testing
 
 You can test <code>mocha-server</code> by cloning this repository and
 running:
@@ -144,10 +148,6 @@ $ cake test
 ```
 
 This will run the tests under the <code>spec</code> folder.
-
-## Contributing
-
-Fork the repo, make your changes, and submit a pull-request!
 
 ## Contributors
 
