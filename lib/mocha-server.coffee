@@ -4,22 +4,20 @@ fs = require 'fs'
 path = require 'path'
 exists = fs.existsSync || path.existsSync
 Snockets = require 'snockets'
-spawn = require('child_process').spawn
+mochaPhantomJSRunner = require('./mocha-phantomjs-runner')
 
 class MochaServer
-  constructor: (config) ->
+  constructor: ({
+    @requirePaths, @testPaths, @recursive, @ui, @bail,
+    @ignoreLeaks, @headless, @reporter, @compilers,
+    @cookies, @headers, @settings, @viewport, @agent
+    }) ->
 
-    @requirePaths = config.requirePaths
-    @testPaths = config.testPaths
-    @recursive = config.recursive
-    @ui = config.ui
-    @bail = config.bail || false
-    @ignoreLeaks = config.ignoreLeaks || false
-    @headless = config.headless
-    @reporter = config.reporter
-    @compilers = config.compilers || {}
+    @bail ?= false
+    @ignoreLeaks ?= false
+    @compilers ?= {}
 
-    @setUpCompilers(config.compilers)
+    @setUpCompilers(@compilers)
 
     @globals = null
 
@@ -40,28 +38,15 @@ class MochaServer
     @app.get "/", @show
 
   launch: ->
+    if @headless
       @run =>
-        if @headless
-          spawnArgs = []
-          if @reporter
-            spawnArgs.push '-R'
-            spawnArgs.push @reporter
-          spawnArgs.push 'http://localhost:8888'
-
-          for i in [0..module.paths.length]
-            bin = path.join module.paths[i], '.bin/mocha-phantomjs'
-            if exists bin
-              mochaPhantomjs = spawn bin, spawnArgs
-              break
-
-          if mochaPhantomjs == undefined
-            mochaPhantomjs = spawn 'mocha-phantomjs', spawnArgs
-
-          mochaPhantomjs.stdout.pipe process.stdout,  end: false
-          mochaPhantomjs.stderr.pipe process.stderr,  end: false
-
-          mochaPhantomjs.on 'exit', (code) ->
-            process.exit code
+        mochaPhantomJSOptions = {
+          @reporter, @cookies, @headers,
+          @settings, @viewport, @agent
+        }
+        mochaPhantomJSRunner.launch mochaPhantomJSOptions
+    else
+      @run()
 
   show: (request, response)=>
     files = @discoverFilesInPaths @requirePaths.concat(@testPaths)

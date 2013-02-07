@@ -11,6 +11,36 @@ var join = path.join;
 var basename = path.basename;
 var cwd = process.cwd();
 var compilers = {};
+var cookies = {};
+var headers = {};
+var settings = {};
+
+function keyValue(val, store) {
+  val = val.split('=');
+  if (val[1] === 'true') {
+    val[1] = true;
+  } else if (val[1] === 'false') {
+    val[1] = false;
+  }
+  store[val[0]] = val[1];
+  return val;
+}
+function cookie(val) {
+  return keyValue(val, cookies);
+}
+function header(val) {
+  return keyValue(val, headers);
+}
+function setting(val) {
+  return keyValue(val, settings);
+}
+function viewport(val) {
+  val = val.split('x');
+  return {
+    width: parseFloat(val[0]),
+    height: parseFloat(val[1])
+  };
+}
 
 program
   .version(JSON.parse(fs.readFileSync(__dirname + '/../package.json', 'utf8')).version)
@@ -20,6 +50,11 @@ program
   .option('-b, --bail', "bail after first test failure")
   .option('-h, --headless', "run headless with phantomjs")
   .option('-c, --compiler <name>', "pass in [ext]:[path to compiler]")
+  .option('--agent <userAgent>', 'specify the user agent to use')
+  .option('--cookie <name>=<value>', 'specify cookie', cookie)
+  .option('--header <name>=<value>', 'specify custom header', header)
+  .option('--setting <key>=<value>', 'specify specific phantom settings', setting)
+  .option('--view <width>x<height>', 'specify phantom viewport size', viewport)
   .option('--ignore-leaks', 'ignore global variable leaks')
   .option('--recursive', 'include sub directories');
 
@@ -66,7 +101,12 @@ var mochaServer = new MochaServer({
   ignoreLeaks: program.ignoreLeaks,
   headless: program.headless,
   reporter: program.reporter,
-  compilers: compilers
+  compilers: compilers,
+  cookies: cookies,
+  headers: headers,
+  settings: settings,
+  viewport: program.viewport,
+  agent: program.agent
 });
 mochaServer.launch();
 
