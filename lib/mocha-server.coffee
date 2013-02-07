@@ -17,7 +17,7 @@ class MochaServer
     @ignoreLeaks ?= false
     @compilers ?= {}
 
-    @setUpCompilers(@compilers)
+    @_setUpCompilers(@compilers)
 
     @globals = null
 
@@ -39,17 +39,17 @@ class MochaServer
 
   launch: ->
     if @headless
-      @run =>
+      @_run =>
         mochaPhantomJSOptions = {
           @reporter, @cookies, @headers,
           @settings, @viewport, @agent
         }
         mochaPhantomJSRunner.launch mochaPhantomJSOptions
     else
-      @run()
+      @_run()
 
   show: (request, response)=>
-    files = @discoverFilesInPaths @requirePaths.concat(@testPaths)
+    files = @_discoverFilesInPaths @requirePaths.concat(@testPaths)
 
     snockets = new Snockets
     scriptOrder = []
@@ -60,15 +60,15 @@ class MochaServer
 
     response.render 'index', { scriptOrder , @ui, @bail, @ignoreLeaks }
 
-  discoverFilesInPaths: (paths)->
+  _discoverFilesInPaths: (paths)->
     files = []
     for p in paths
-      for discoveredFilePath in @discoverFiles(p)
+      for discoveredFilePath in @_discoverFiles(p)
         resolvedFilePath = path.resolve discoveredFilePath
         files.push resolvedFilePath unless resolvedFilePath in files
     files
 
-  discoverFiles: (rootPath)->
+  _discoverFiles: (rootPath)->
     originalPath = rootPath
 
     rootPath = "#{originalPath}.js" unless exists rootPath
@@ -82,28 +82,35 @@ class MochaServer
         file = path.join rootPath, file
         stat = fs.statSync file
         if stat.isDirectory()
-          files = files.concat(@discoverFiles file) if @recursive
+          files = files.concat(@_discoverFiles file) if @recursive
           return
-        return if not stat.isFile() or not @shouldInclude(file)
+        return if not stat.isFile() or not @_shouldInclude(file)
         files.push file
     files
 
-  setUpCompilers: (compilers)->
-    for ext, compiler of compilers
-      Snockets.compilers[ext] = require path.join process.cwd(), compiler
+  _setUpCompilers: (compilerPaths)->
+    for ext, compilerPath of compilerPaths
+      Snockets.compilers[ext] = @_loadCompiler compilerPath
 
-  fileMatchingRegExp: ->
+  _loadCompiler: (compilerPath) ->
+    compiler = require path.join process.cwd(), compilerPath
+    if compiler instanceof Function
+      new compiler
+    else
+      compiler
+
+  _fileMatchingRegExp: ->
     s = '^[^\.].*\.(js|coffee'
     for ext of @compilers
       s += '|' + ext
     s += ')$'
     new RegExp(s)
 
-  shouldInclude: (file)->
-    @re ||= @fileMatchingRegExp()
+  _shouldInclude: (file)->
+    @re ||= @_fileMatchingRegExp()
     @re.test(path.basename(file))
 
-  run: (callback)->
+  _run: (callback)->
     callback ?= -> console.log 'Tests available at http://localhost:8888'
     @app.listen 8888, callback
 

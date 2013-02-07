@@ -26,20 +26,25 @@ This will launch a server that can be accessed at http://localhost:8888
 The following flags can also be used:
 
 ```sh
-  Usage: mocha-server [options] [test files...]
+  Usage: mocha-server [options]
 
   Options:
 
-    -h, --help             output usage information
-    -V, --version          output the version number
-    -r, --require <name>   require the given module
-    -R, --reporter <name>  specify the reporter to use
-    -u, --ui <name>        specify user-interface (bdd|tdd|exports)
-    -b, --bail             bail after first test failure
-    -h, --headless         run headless with phantomjs
-    -c, --compiler <name>  pass in [ext]:[path to compiler]
-    --ignore-leaks         ignore global variable leaks
-    --recursive            include sub directories
+    --help               output usage information
+    -V, --version            output the version number
+    -r, --require <name>     require the given module
+    -R, --reporter <name>    specify the reporter to use
+    -u, --ui <name>          specify user-interface (bdd|tdd|exports)
+    -b, --bail               bail after first test failure
+    -h, --headless           run headless with phantomjs
+    -c, --compilers <name>   pass in [ext]:[path to compiler]
+    --agent <userAgent>      specify the user agent to use
+    --cookie <name>=<value>  specify cookie
+    --header <name>=<value>  specify custom header
+    --setting <key>=<value>  specify specific phantom settings
+    --view <width>x<height>  specify phantom viewport size
+    --ignore-leaks           ignore global variable leaks
+    --recursive              include sub directories
 ```
 
 By default, tests are pulled in from the <code>test</code> directory.

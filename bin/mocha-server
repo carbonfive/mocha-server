@@ -49,7 +49,7 @@ program
   .option('-u, --ui <name>', 'specify user-interface (bdd|tdd|exports)', 'bdd')
   .option('-b, --bail', "bail after first test failure")
   .option('-h, --headless', "run headless with phantomjs")
-  .option('-c, --compiler <name>', "pass in [ext]:[path to compiler]")
+  .option('-c, --compilers <name>', "pass in [ext]:[path to compiler]")
   .option('--agent <userAgent>', 'specify the user agent to use')
   .option('--cookie <name>=<value>', 'specify cookie', cookie)
   .option('--header <name>=<value>', 'specify custom header', header)
@@ -64,7 +64,7 @@ program.on('require', function(mod){
   requires.push(mod);
 });
 
-program.on('compiler', function(extAndCompiler){
+program.on('compilers', function(extAndCompiler){
   var s = extAndCompiler.split(':');
   if (s.length !== 2) {
     console.error("Option error: compiler must use [ext]:[path to compiler] format");
