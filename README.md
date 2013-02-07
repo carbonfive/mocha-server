@@ -75,7 +75,7 @@ functionality is supplied by [snockets][snockets].
 #### Adding Additional Javascript Compilers
 
 Out of the box, <code>mocha-server</code> supports Javascript and
-[coffeescript][coffeescript] files, through [snokets][snockets]. You can
+[coffeescript][coffeescript] files, through [snockets][snockets]. You can
 pass in additional compilers through the <code>--compiler</code flag as
 follows:
 
@@ -100,7 +100,7 @@ to load <code>./test/mocha-server.opts</code>, concatenating the
 arguments to those passed on the command line. For example, suppose you
 have the following:
 
-```sh
+```
 
 --require ./test/support
 -h
@@ -119,13 +119,17 @@ headlessly. You need to install [PhantomJS v.1.7.0][phantomjs] or
 greater and then you can enter:
 
 ```sh
+
 $ mocha-server --headless
+
 ```
 
 Or:
 
 ```sh
+
 $ mocha-server -h
+
 ```
 
 This launches the server, then runs <code>mocha-phantomjs</code>
@@ -137,7 +141,9 @@ The files under <code>test</code> folder provide examples of writing
 tests for the system. You can run them by:
 
 ```sh
+
 $ mocha-server
+
 ```
 
 ## Testing
@@ -146,7 +152,9 @@ You can test <code>mocha-server</code> by cloning this repository and
 running:
 
 ```sh
+
 $ cake test
+
 ```
 
 This will run the tests under the <code>spec</code> folder.
@@ -159,7 +167,7 @@ Fork the repo, make your changes, and submit a pull-request!
 
 * [Rudy Jahchan][rudy-jahchan]
 * [Hugo Melo][squanto]
-* [Andy Peterson][ndp]
+* [Andrew Peterson][ndp]
 
   [ndp]: http://github.com/ndp
   [squanto]: http://github.com/squanto
