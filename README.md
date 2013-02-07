@@ -1,9 +1,10 @@
 # mocha-server
 
-Run your front-end [mocha][mocha] tests where they belong; in the browser! <code>mocha-server</code> automates
-compiling your tests into a web page so you don't have to. You can even run them 
+Run your front-end [mocha][mocha] tests where they belong; in the browser! Much like [jasmine-gem][jasmine-gem], 
+<code>mocha-server</code> serves up your Mocha suite in a web page so you don't have to spend time writing HTML
+test runners and can focus on the code itself. You can even run them 
 them headlessly with [mocha-phamtomjs][mocha-phantomjs] so they can  be part of your build
-process.
+process!
 
 ## Installation
 
