@@ -88,9 +88,16 @@ class MochaServer
         files.push file
     files
 
-  _setUpCompilers: (compilers)->
-    for ext, compiler of compilers
-      Snockets.compilers[ext] = require path.join process.cwd(), compiler
+  _setUpCompilers: (compilerPaths)->
+    for ext, compilerPath of compilerPaths
+      Snockets.compilers[ext] = @_loadCompiler compilerPath
+
+  _loadCompiler: (compilerPath) ->
+    compiler = require path.join process.cwd(), compilerPath
+    if compiler instanceof Function
+      new compiler
+    else
+      compiler
 
   _fileMatchingRegExp: ->
     s = '^[^\.].*\.(js|coffee'
