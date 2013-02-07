@@ -1,9 +1,9 @@
 # mocha-server
 
-<code>mocha-server</code> mounts code and
-[mocha][mocha] tests so they can be run in browser, and can even run
+Run your front-end [mocha][mocha] tests where they belong; in the browser! <code>mocha-server</code> automates
+compiling your tests into a web page so you don't have to. You can even run them 
 them headlessly with [mocha-phamtomjs][mocha-phantomjs] so they can  be part of your build
-process. Use it to run both frontend and backend javascript specs with mocha.
+process.
 
 ## Installation
 
