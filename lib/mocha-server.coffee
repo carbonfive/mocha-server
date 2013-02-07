@@ -4,13 +4,13 @@ fs = require 'fs'
 path = require 'path'
 exists = fs.existsSync || path.existsSync
 Snockets = require 'snockets'
-spawn = require('child_process').spawn
 mochaPhantomJSRunner = require('./mocha-phantomjs-runner')
 
 class MochaServer
   constructor: ({
     @requirePaths, @testPaths, @recursive, @ui, @bail,
-    @ignoreLeaks, @headless, @reporter, @compilers
+    @ignoreLeaks, @headless, @reporter, @compilers,
+    @cookies, @headers, @settings, @viewport, @agent
     }) ->
 
     @bail ?= false
@@ -40,9 +40,11 @@ class MochaServer
   launch: ->
     if @headless
       @run =>
-        mochaPhantomJSRunner.launch {
-          @reporter
+        mochaPhantomJSOptions = {
+          @reporter, @cookies, @headers,
+          @settings, @viewport, @agent
         }
+        mochaPhantomJSRunner.launch mochaPhantomJSOptions
     else
       @run()
 

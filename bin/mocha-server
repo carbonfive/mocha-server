@@ -50,11 +50,11 @@ program
   .option('-b, --bail', "bail after first test failure")
   .option('-h, --headless', "run headless with phantomjs")
   .option('-c, --compiler <name>', "pass in [ext]:[path to compiler]")
-  .option('-A, --agent <userAgent>', 'specify the user agent to use')
-  .option('-c, --cookie <name>=<value>', 'specify cookie', cookie)
-  .option('-h, --header <name>=<value>', 'specify custom header', header)
-  .option('-s, --setting <key>=<value>', 'specify specific phantom settings', setting)
-  .option('-v, --view <width>x<height>', 'specify phantom viewport size', viewport)
+  .option('--agent <userAgent>', 'specify the user agent to use')
+  .option('--cookie <name>=<value>', 'specify cookie', cookie)
+  .option('--header <name>=<value>', 'specify custom header', header)
+  .option('--setting <key>=<value>', 'specify specific phantom settings', setting)
+  .option('--view <width>x<height>', 'specify phantom viewport size', viewport)
   .option('--ignore-leaks', 'ignore global variable leaks')
   .option('--recursive', 'include sub directories');
 
@@ -101,7 +101,12 @@ var mochaServer = new MochaServer({
   ignoreLeaks: program.ignoreLeaks,
   headless: program.headless,
   reporter: program.reporter,
-  compilers: compilers
+  compilers: compilers,
+  cookies: cookies,
+  headers: headers,
+  settings: settings,
+  viewport: program.viewport,
+  agent: program.agent
 });
 mochaServer.launch();
 
