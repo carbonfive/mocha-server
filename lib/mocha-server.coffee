@@ -40,35 +40,30 @@ class MochaServer
     @app.get "/", @show
 
   launch: ->
-    if @headless
-      @run ->
-        spawnArgs = []
-        if @reporter
-          spawnArgs.push '-R'
-          spawnArgs.push @reporter
-        spawnArgs.push 'http://localhost:8888'
+      @run =>
+        if @headless
+          spawnArgs = []
+          if @reporter
+            spawnArgs.push '-R'
+            spawnArgs.push @reporter
+          spawnArgs.push 'http://localhost:8888'
 
-        for i in [0..module.paths.length]
-          bin = path.join module.paths[i], '.bin/mocha-phantomjs'
-          if exists bin
-            mochaPhantomjs = spawn bin, spawnArgs
-            break
+          for i in [0..module.paths.length]
+            bin = path.join module.paths[i], '.bin/mocha-phantomjs'
+            if exists bin
+              mochaPhantomjs = spawn bin, spawnArgs
+              break
 
-        if mochaPhantomjs == undefined
-          mochaPhantomjs = spawn 'mocha-phantomjs', spawnArgs
+          if mochaPhantomjs == undefined
+            mochaPhantomjs = spawn 'mocha-phantomjs', spawnArgs
 
-        mochaPhantomjs.stdout.pipe process.stdout,  end: false
-        mochaPhantomjs.stderr.pipe process.stderr,  end: false
+          mochaPhantomjs.stdout.pipe process.stdout,  end: false
+          mochaPhantomjs.stderr.pipe process.stderr,  end: false
 
-        mochaPhantomjs.on 'exit', (code) ->
-          process.exit code
-
-     else
-       @run()
-  
+          mochaPhantomjs.on 'exit', (code) ->
+            process.exit code
 
   show: (request, response)=>
-
     files = @discoverFilesInPaths @requirePaths.concat(@testPaths)
 
     snockets = new Snockets
@@ -122,8 +117,6 @@ class MochaServer
   shouldInclude: (file)->
     @re ||= @fileMatchingRegExp()
     @re.test(path.basename(file))
-
-
 
   run: (callback)->
     callback ?= -> console.log 'Tests available at http://localhost:8888'
