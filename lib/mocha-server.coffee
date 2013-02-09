@@ -36,6 +36,10 @@ class MochaServer
     @cache.set 'mocha.js', js
 
     @app.get "/", @show
+    @app.use (error, request, response, next) =>
+      console.error error.stack
+      response.status(500).render 'error', { error }
+      process.exit(1) if @headless
 
   launch: ->
     if @headless
@@ -48,7 +52,7 @@ class MochaServer
     else
       @_run()
 
-  show: (request, response)=>
+  show: (request, response, next) =>
     files = @_discoverFilesInPaths @requirePaths.concat(@testPaths)
 
     snockets = new Snockets
@@ -57,7 +61,6 @@ class MochaServer
       for { filename, js } in snockets.getCompiledChain(file, async: false) when filename not in scriptOrder
         scriptOrder.push filename
         @cache.set filename, js
-
     response.render 'index', { scriptOrder , @ui, @bail, @ignoreLeaks }
 
   _discoverFilesInPaths: (paths)->
