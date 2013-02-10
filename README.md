@@ -1,6 +1,6 @@
 # mocha-server
 
-Run your front-end [mocha][mocha] tests where they belong; in the browser! Much like [jasmine-gem][jasmine-gem], 
+Run your front-end [mocha][mocha] tests where they belong; in the browser! Much like [jasmine-gem](https://github.com/pivotal/jasmine), 
 <code>mocha-server</code> serves up your Mocha suite in a web page so you don't have to spend time writing HTML
 test runners and can focus on the code itself. You can even run them 
 them headlessly with [mocha-phamtomjs][mocha-phantomjs] so they can  be part of your build
