@@ -160,7 +160,9 @@ This will run the tests under the <code>spec</code> folder.
 * [Rudy Jahchan][rudy-jahchan]
 * [Hugo Melo][squanto]
 * [Andrew Peterson][ndp]
+* [Jon Rogers][bunnymatic]
 
+  [bunnymatic]: http://github.com/bunnymatic
   [ndp]: http://github.com/ndp
   [squanto]: http://github.com/squanto
   [rudy-jahchan]: http://github.com/rudyjahchan
