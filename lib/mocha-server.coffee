@@ -16,6 +16,27 @@ class MochaServer
     @_setMochaCache 'mocha.js',  @app
     @_setMochaCache 'mocha.css', @app
 
+  launch: ->
+    if @headless
+      @_run =>
+        mochaPhantomJSOptions = {
+          @reporter, @cookies, @headers,
+          @settings, @viewport, @agent
+        }
+        mochaPhantomJSRunner.launch mochaPhantomJSOptions
+    else
+      @_run()
+
+  show: (request, response, next) =>
+    files = @_discoverFilesInPaths @requirePaths.concat(@testPaths)
+
+    snockets = new Snockets
+    scriptOrder = []
+    for file in files
+      for { filename, js } in snockets.getCompiledChain(file, async: false) when filename not in scriptOrder
+        scriptOrder.push filename
+        @app.cache.set filename, js
+    response.render 'index', { scriptOrder , @ui, @bail, @ignoreLeaks }
 
   _configureOptions: (options) ->
     @requirePaths = options['requirePaths']
@@ -58,28 +79,6 @@ class MochaServer
     filePath = path.resolve mochaDir, filename
     file = fs.readFileSync filePath
     app.cache.set filename, file
-
-  launch: ->
-    if @headless
-      @_run =>
-        mochaPhantomJSOptions = {
-          @reporter, @cookies, @headers,
-          @settings, @viewport, @agent
-        }
-        mochaPhantomJSRunner.launch mochaPhantomJSOptions
-    else
-      @_run()
-
-  show: (request, response, next) =>
-    files = @_discoverFilesInPaths @requirePaths.concat(@testPaths)
-
-    snockets = new Snockets
-    scriptOrder = []
-    for file in files
-      for { filename, js } in snockets.getCompiledChain(file, async: false) when filename not in scriptOrder
-        scriptOrder.push filename
-        @app.cache.set filename, js
-    response.render 'index', { scriptOrder , @ui, @bail, @ignoreLeaks }
 
   _discoverFilesInPaths: (paths)->
     files = []
