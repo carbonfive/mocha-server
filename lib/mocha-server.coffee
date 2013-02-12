@@ -2,7 +2,7 @@ express = require 'express'
 connectFileCache = require 'connect-file-cache'
 fs = require 'fs'
 path = require 'path'
-exists = fs.existsSync || path.existsSync
+exists = fs.existsSync
 Snockets = require 'snockets'
 mochaPhantomJSRunner = require('./mocha-phantomjs-runner')
 
