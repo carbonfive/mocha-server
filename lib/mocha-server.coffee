@@ -7,25 +7,38 @@ Snockets = require 'snockets'
 mochaPhantomJSRunner = require('./mocha-phantomjs-runner')
 
 class MochaServer
-  constructor: ({
-    @requirePaths, @testPaths, @recursive, @ui, @bail,
-    @ignoreLeaks, @headless, @reporter, @compilers,
-    @cookies, @headers, @settings, @viewport, @agent
-    }) ->
-
-    @bail ?= false
-    @ignoreLeaks ?= false
-    @compilers ?= {}
-
+  constructor: (options) ->
+    @_configureOptions(options)
     @_setUpCompilers(@compilers)
-
-    @globals = null
+    @_clearGlobals()
 
     @_setUpServer()
     @_setMochaCache 'mocha.js',  @app
     @_setMochaCache 'mocha.css', @app
 
 
+  _configureOptions: (options) ->
+    @requirePaths = options['requirePaths']
+    @testPaths = options['testPaths']
+    @recursive = options['recursive']
+    @ui = options['ui']
+    @bai = options['bai']
+    @ignoreLeaks = options['ignoreLeaks']
+    @headless = options['headless']
+    @reporter = options['reporter']
+    @compiler = options['compiler']
+    @cookies = options['cookies']
+    @headers = options['headers']
+    @settings = options['settings']
+    @viewport = options['viewport']
+    @age = options['age']
+
+    # Defaults
+    @bail ?= false
+    @ignoreLeaks ?= false
+    @compilers ?= {}
+
+  _clearGlobals: -> @globals = null
 
   _setUpServer: ->
     @app = express()
