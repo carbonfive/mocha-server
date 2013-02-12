@@ -21,25 +21,30 @@ class MochaServer
 
     @globals = null
 
+    @_setUpServer()
+    @_setMochaCache 'mocha.js',  @app
+    @_setMochaCache 'mocha.css', @app
+
+
+
+  _setUpServer: ->
     @app = express()
-    @cache = connectFileCache()
-    @app.use @cache.middleware
+    @app.cache = connectFileCache()
+    @app.use @app.cache.middleware
     @app.set "view engine", "jade"
     @app.set 'views', "#{__dirname}/../views"
-
-    mochaDir = path.dirname require.resolve('mocha')
-    cssPath = path.resolve mochaDir, 'mocha.css'
-    css = fs.readFileSync cssPath
-    jsPath = path.resolve mochaDir, 'mocha.js'
-    js = fs.readFileSync jsPath
-    @cache.set 'mocha.css', css
-    @cache.set 'mocha.js', js
 
     @app.get "/", @show
     @app.use (error, request, response, next) =>
       console.error error.stack
       response.status(500).render 'error', { error }
       process.exit(1) if @headless
+
+  _setMochaCache: (filename, app) ->
+    mochaDir = path.dirname require.resolve('mocha')
+    filePath = path.resolve mochaDir, filename
+    file = fs.readFileSync filePath
+    app.cache.set filename, file
 
   launch: ->
     if @headless
@@ -60,7 +65,7 @@ class MochaServer
     for file in files
       for { filename, js } in snockets.getCompiledChain(file, async: false) when filename not in scriptOrder
         scriptOrder.push filename
-        @cache.set filename, js
+        @app.cache.set filename, js
     response.render 'index', { scriptOrder , @ui, @bail, @ignoreLeaks }
 
   _discoverFilesInPaths: (paths)->
@@ -102,15 +107,15 @@ class MochaServer
     else
       compiler
 
-  _fileMatchingRegExp: ->
+  _fileMatchingRegExp: (compilers) ->
     s = '^[^\.].*\.(js|coffee'
-    for ext of @compilers
+    for ext of compilers
       s += '|' + ext
     s += ')$'
     new RegExp(s)
 
   _shouldInclude: (file)->
-    @re ||= @_fileMatchingRegExp()
+    @re = @_fileMatchingRegExp(@compilers)
     @re.test(path.basename(file))
 
   _run: (callback)->
