@@ -58,7 +58,7 @@ program
   .option('--ignore-leaks', 'ignore global variable leaks')
   .option('--recursive', 'include sub directories');
 
-var requires = []
+var requires = [];
 
 program.on('require', function(mod){
   requires.push(mod);
@@ -70,7 +70,7 @@ program.on('compilers', function(extAndCompiler){
     console.error("Option error: compiler must use [ext]:[path to compiler] format");
     process.exit(1);
   }
-  compilers[s[0]] = s[1]
+  compilers[s[0]] = s[1];
 });
 
 try {
