@@ -50,6 +50,7 @@ program
   .option('-b, --bail', "bail after first test failure")
   .option('-h, --headless', "run headless with phantomjs")
   .option('-c, --compilers <name>', "pass in [ext]:[path to compiler]")
+  .option('-p, --port <portNumber?', "specify the port number to launch the server")
   .option('--agent <userAgent>', 'specify the user agent to use')
   .option('--cookie <name>=<value>', 'specify cookie', cookie)
   .option('--header <name>=<value>', 'specify custom header', header)
@@ -106,7 +107,8 @@ var mochaServer = new MochaServer({
   headers: headers,
   settings: settings,
   viewport: program.viewport,
-  agent: program.agent
+  agent: program.agent,
+  port: program.port
 });
-mochaServer.launch();
 
+mochaServer.launch();

@@ -10,12 +10,14 @@ class MochaServer
   constructor: ({
     @requirePaths, @testPaths, @recursive, @ui, @bail,
     @ignoreLeaks, @headless, @reporter, @compilers,
-    @cookies, @headers, @settings, @viewport, @agent
+    @cookies, @headers, @settings, @viewport, @agent,
+    @port
     }) ->
 
     @bail ?= false
     @ignoreLeaks ?= false
     @compilers ?= {}
+    @port ?= 8888
 
     @_setUpCompilers(@compilers)
 
@@ -114,7 +116,7 @@ class MochaServer
     @re.test(path.basename(file))
 
   _run: (callback)->
-    callback ?= -> console.log 'Tests available at http://localhost:8888'
-    @app.listen 8888, callback
+    callback ?= => console.log "Tests available at http://localhost:#{@port}"
+    @app.listen @port, callback
 
 module.exports = exports = MochaServer
