@@ -5,7 +5,10 @@ path = require 'path'
 
 copyPropertyToArg = (property, flag, args) ->
   if property?
-    args.push "-#{flag}"
+    args.push if flag.length > 1
+      "--#{flag}"
+    else
+      "-#{flag}"
     args.push property
 
 copyMapToArg = (map, flag, args) ->
@@ -16,12 +19,15 @@ copyMapToArg = (map, flag, args) ->
 
 launch = ({
   reporter, cookies, headers,
-  settings, viewport, agent
+  settings, viewport, agent,
+  timeout, slow
   }) ->
 
   spawnArgs = []
   copyPropertyToArg(reporter, 'R', spawnArgs)
   copyPropertyToArg(agent, 'A', spawnArgs)
+  copyPropertyToArg(timeout, 't', spawnArgs)
+  copyPropertyToArg(slow, 'slow', spawnArgs)
   copyMapToArg(cookies, 'c', spawnArgs)
   copyMapToArg(headers, 'h', spawnArgs)
   copyMapToArg(settings, 's', spawnArgs)

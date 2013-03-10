@@ -11,13 +11,15 @@ class MochaServer
     @requirePaths, @testPaths, @recursive, @ui, @bail,
     @ignoreLeaks, @headless, @reporter, @compilers,
     @cookies, @headers, @settings, @viewport, @agent,
-    @port
+    @port, @timeout, @slow
     }) ->
 
     @bail ?= false
     @ignoreLeaks ?= false
     @compilers ?= {}
     @port ?= 8888
+    @timeout ?= 2000
+    @slow ?= 75
 
     @_setUpCompilers(@compilers)
 
@@ -48,7 +50,7 @@ class MochaServer
       @_run =>
         mochaPhantomJSOptions = {
           @reporter, @cookies, @headers,
-          @settings, @viewport, @agent
+          @settings, @viewport, @agent, @timeout, @slow
         }
         mochaPhantomJSRunner.launch mochaPhantomJSOptions
     else
@@ -63,7 +65,7 @@ class MochaServer
       for { filename, js } in snockets.getCompiledChain(file, async: false) when filename not in scriptOrder
         scriptOrder.push filename
         @cache.set filename, js
-    response.render 'index', { scriptOrder , @ui, @bail, @ignoreLeaks }
+    response.render 'index', { scriptOrder , @ui, @bail, @ignoreLeaks, @timeout, @slow }
 
   _discoverFilesInPaths: (paths)->
     files = []

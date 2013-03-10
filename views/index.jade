@@ -8,9 +8,11 @@ html(lang="en")
     script(src='mocha.js')
     script
       (function() {
-        ignoreLeaks = #{ignoreLeaks};
+        var ignoreLeaks = #{ignoreLeaks};
 
         mocha.bail(#{bail});
+        mocha.slow(#{slow});
+        mocha.timeout(#{timeout});
 
         if(ignoreLeaks) {
           mocha.ignoreLeaks();
