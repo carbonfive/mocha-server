@@ -167,7 +167,7 @@ This will run the tests under the <code>spec</code> folder.
   [squanto]: http://github.com/squanto
   [rudy-jahchan]: http://github.com/rudyjahchan
   [mocha-server]: http://github.com/carbonfive/mocha-server
-  [mocha]: http://visionmedia.github.com/mocha/
+  [mocha]: http://mochajs.org/
   [mocha-phantomjs]: https://github.com/metaskills/mocha-phantomjs
   [phantomjs]: http://phantomjs.org/
   [sprockets]: https://github.com/sstephenson/sprockets
